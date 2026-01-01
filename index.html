@@ -14,14 +14,14 @@ font-family: 'Helvetica Neue', sans-serif;
 display: flex;
 flex-direction: column;
 align-items: center;
-justify-content: space-around; /* ボタンとコードを均等配置 */
+justify-content: space-around;
 text-align: center;
 background: linear-gradient(135deg, #f6f6f6, #d9d9d9);
-overflow: hidden; /* スクロールなし */
+overflow: hidden;
 }
 
 h1 {
-font-size: 8vw; /* 画面幅に応じて大きく */
+font-size: calc(8vw * 0.7); /* タイトル0.7倍 */
 margin: 0;
 color: #333;
 }
@@ -30,16 +30,16 @@ color: #333;
 display: flex;
 flex-direction: column;
 justify-content: space-around;
-gap: 2vh;
+gap: calc(2vh * 0.7); /* ボタン間隔0.7倍 */
 width: 80%;
 max-width: 500px;
-flex: 1; /* 画面の高さに応じて伸縮 */
+flex: 1;
 }
 
 button {
-flex: 1; /* 高さを均等に */
-font-size: 5vw;
-margin: 1vh 0;
+flex: 1;
+font-size: calc(5vw * 0.7); /* ボタン文字0.7倍 */
+margin: calc(1vh * 0.7) 0;
 border-radius: 12px;
 border: none;
 cursor: pointer;
@@ -54,18 +54,18 @@ transform: scale(0.97);
 }
 
 #output {
-font-size: 10vw;
+font-size: calc(10vw * 0.7); /* コード表示0.7倍 */
 font-weight: bold;
 color: #111;
 width: 100%;
-white-space: nowrap; /* 横並び */
+white-space: nowrap;
 overflow: hidden;
 text-overflow: ellipsis;
 }
 
 #output p {
 display: inline-block;
-margin: 0 2vw;
+margin: 0 calc(2vw * 0.7);
 }
 </style>
 </head>
