@@ -16,28 +16,28 @@ align-items: center;
 }
 
 h1 {
-font-size: 32px;
-margin-bottom: 20px;
+font-size: 48px; /* タイトル大きく */
+margin-bottom: 30px;
 color: #333;
 }
 
 .button-container {
 display: flex;
-flex-direction: column; /* 縦並び */
-gap: 10px;
-margin-bottom: 30px;
+flex-direction: column;
+gap: 20px; /* ボタン間を広く */
+margin-bottom: 40px;
 }
 
 button {
-padding: 12px 20px;
-font-size: 18px;
-border-radius: 12px;
+padding: 20px 30px; /* ボタン大きく */
+font-size: 28px; /* ボタン文字大きく */
+border-radius: 15px;
 border: none;
 cursor: pointer;
 transition: all 0.2s ease;
 color: #fff;
 background: #4a90e2;
-box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+box-shadow: 0 6px 8px rgba(0,0,0,0.15);
 touch-action: manipulation;
 }
 
@@ -47,18 +47,18 @@ transform: translateY(-2px);
 }
 
 #output {
-font-size: 48px;
+font-size: 72px; /* コード大きく */
 font-weight: bold;
 line-height: 1.5;
 overflow-x: auto;
-white-space: nowrap; /* 横並び */
+white-space: nowrap;
 max-width: 100%;
 color: #111;
 }
 
 #output p {
 display: inline-block;
-margin: 0 15px; /* コード間の余白 */
+margin: 0 25px; /* コード間の余白を広げる */
 }
 </style>
 </head>
@@ -106,7 +106,6 @@ allModes: ["C","D","E","F","G","A","B",
 "D♭m7","E♭m7","G♭m7","A♭m7","B♭m7"]
 };
 
-// シャッフル関数
 function shuffle(array) {
 let arr = [...array];
 for (let i = arr.length - 1; i > 0; i--) {
