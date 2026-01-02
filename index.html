@@ -1,148 +1,260 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コード出力</title>
-<style>
-html, body {
-margin: 0;
-padding: 0;
-width: 100%;
-height: 100%;
-font-family: 'Helvetica Neue', sans-serif;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: space-around;
-text-align: center;
-background: linear-gradient(135deg, #f6f6f6, #d9d9d9);
-overflow: hidden;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コード出力</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+            text-align: center;
+            background-color: #f0f4f8;
+            color: #333;
+            padding: 20px;
+        }
 
-h1 {
-font-size: calc(8vw * 0.5); /* タイトル0.5倍 */
-margin: 0;
-color: #333;
-}
+        h1 { color: #2c3e50; margin-bottom: 30px; }
 
-.button-container {
-display: flex;
-flex-direction: column;
-justify-content: space-around;
-gap: calc(2vh * 0.5); /* ボタン間隔0.5倍 */
-width: 80%;
-max-width: 500px;
-flex: 1;
-}
+        .main-layout {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
 
-button {
-flex: 1;
-font-size: calc(5vw * 0.5); /* ボタン文字0.5倍 */
-margin: calc(1vh * 0.5) 0;
-border-radius: 12px;
-border: none;
-cursor: pointer;
-color: #fff;
-background: #4a90e2;
-box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-touch-action: manipulation;
-}
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
 
-button:active {
-transform: scale(0.97);
-}
+        button {
+            width: 200px; padding: 12px; font-size: 16px;
+            cursor: pointer; background-color: #3498db; color: white;
+            border: none; border-radius: 5px; transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-#output {
-font-size: calc(10vw * 0.5); /* コード表示0.5倍 */
-font-weight: bold;
-color: #111;
-width: 100%;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
+        button:hover { background-color: #2980b9; }
+        .btn-all { background-color: #e67e22; }
 
-#output p {
-display: inline-block;
-margin: 0 calc(2vw * 0.5);
-}
-</style>
+        .auto-control-area {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 15px; width: 150px;
+        }
+
+        .btn-auto {
+            width: 80px; height: 80px; border-radius: 50%;
+            background-color: #95a5a6; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: none; color: white; cursor: pointer;
+        }
+
+        .btn-auto.active {
+            background-color: #2ecc71;
+            box-shadow: 0 0 15px #2ecc71;
+            animation: pulse 1s infinite;
+        }
+
+        .tempo-slider-container {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 8px;
+        }
+
+        .tempo-label {
+            font-size: 14px; font-weight: bold; color: #2c3e50;
+            background: #ecf0f1; padding: 4px 10px; border-radius: 10px;
+        }
+
+        /* サウンドON/OFFボタン */
+        .btn-sound {
+            width: 120px; padding: 8px; font-size: 12px;
+            background-color: #bdc3c7; color: #2c3e50;
+            border-radius: 20px; font-weight: bold;
+        }
+        .btn-sound.on {
+            background-color: #f1c40f; color: #000;
+        }
+
+        #result-container {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 20px; max-width: 700px; margin: 0 auto;
+        }
+
+        .chord-box {
+            background-color: white; border: 3px solid #2c3e50;
+            border-radius: 12px; width: 130px; height: 100px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
+    </style>
 </head>
 <body>
-<h1>コード出力</h1>
 
-<div class="button-container">
-<button id="major">maj</button>
-<button id="majorMinor">maj + min</button>
-<button id="majorMinor7">maj + min + 7</button>
-<button id="majorMinor7Sharp">maj + min + 7 + ♯</button>
-<button id="allModes">maj + min + 7 + ♯ + ♭</button>
-</div>
+    <h1>コード出力</h1>
 
-<div id="output"></div>
+    <div class="main-layout">
+        <div class="button-container">
+            <button onclick="setMode('maj')">maj</button>
+            <button onclick="setMode('maj+min')">maj+min</button>
+            <button onclick="setMode('maj+min+7')">maj+min+7</button>
+            <button onclick="setMode('maj+min+7+#')">maj+min+7+#</button>
+            <button onclick="setMode('maj+min+7+#+♭')">maj+min+7+#+♭</button>
+            <button onclick="setMode('all')" class="btn-all">all</button>
+        </div>
 
-<script>
-const modeLists = {
-major: ["C","D","E","F","G","A","B"],
-majorMinor: ["C","D","E","F","G","A","B",
-"Cm","Dm","Em","Fm","Gm","Am","Bm"],
-majorMinor7: ["C","D","E","F","G","A","B",
-"Cm","Dm","Em","Fm","Gm","Am","Bm",
-"C7","D7","E7","F7","G7","A7","B7",
-"Cm7","Dm7","Em7","Fm7","Gm7","Am7","Bm7"],
-majorMinor7Sharp: ["C","D","E","F","G","A","B",
-"Cm","Dm","Em","Fm","Gm","Am","Bm",
-"C7","D7","E7","F7","G7","A7","B7",
-"Cm7","Dm7","Em7","Fm7","Gm7","Am7","Bm7",
-"C♯","D♯","F♯","G♯","A♯",
-"C♯m","D♯m","F♯m","G♯m","A♯m",
-"C♯7","D♯7","F♯7","G♯7","A♯7",
-"C♯m7","D♯m7","F♯m7","G♯m7","A♯m7"],
-allModes: ["C","D","E","F","G","A","B",
-"Cm","Dm","Em","Fm","Gm","Am","Bm",
-"C7","D7","E7","F7","G7","A7","B7",
-"Cm7","Dm7","Em7","Fm7","Gm7","Am7","Bm7",
-"C♯","D♯","F♯","G♯","A♯",
-"C♯m","D♯m","F♯m","G♯m","A♯m",
-"C♯7","D♯7","F♯7","G♯7","A♯7",
-"C♯m7","D♯m7","F♯m7","G♯m7","A♯m7",
-"D♭","E♭","G♭","A♭","B♭",
-"D♭m","E♭m","G♭m","A♭m","B♭m",
-"D♭7","E♭7","G♭7","A♭7","B♭7",
-"D♭m7","E♭m7","G♭m7","A♭m7","B♭m7"]
-};
+        <div class="auto-control-area">
+            <button id="autoBtn" class="btn-auto" onclick="toggleAuto()">auto</button>
+            <div class="tempo-slider-container">
+                <input type="range" id="tempoSlider" min="1" max="3" step="1" value="2" oninput="updateTempo()">
+                <div id="tempoDisplay" class="tempo-label">Moderato</div>
+            </div>
+            <button id="soundBtn" class="btn-sound on" onclick="toggleSound()">SOUND: ON</button>
+        </div>
+    </div>
 
-function shuffle(array) {
-let arr = [...array];
-for (let i = arr.length - 1; i > 0; i--) {
-const j = Math.floor(Math.random() * (i + 1));
-[arr[i], arr[j]] = [arr[j], arr[i]];
-}
-return arr;
-}
+    <div id="result-container">
+        <div style="color: #7f8c8d;">ボタンを押してスタート</div>
+    </div>
 
-function getRandomCodes(list) {
-const outputArr = shuffle(list).slice(0,5);
-display(outputArr);
-}
+    <script>
+        const rootsNatural = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        const rootsSharp   = ['C#', 'D#', 'F#', 'G#', 'A#'];
+        const rootsFlat    = ['D♭', 'E♭', 'G♭', 'A♭', 'B♭'];
+        const qualityMaj = [''];
+        const qualityMin = ['m'];
+        const quality7   = ['7', 'M7', 'm7'];
+        const qualitySpecial = ['sus4', '7sus4', 'aug', 'dim', 'dim7', '6', 'm6', 'add9', '9', 'mM7', 'm7-5'];
 
-function display(codesArr) {
-const outputDiv = document.getElementById("output");
-outputDiv.innerHTML = codesArr.map(c => `<p>${c}</p>`).join("");
-}
+        let isAuto = false;
+        let isSoundOn = true;
+        let currentType = '';
+        let audioCtx = null;
+        let nextNoteTime = 0.0;
+        let beatInBar = 0;
+        let timerID = null;
 
-function registerButton(id, list) {
-const btn = document.getElementById(id);
-btn.onclick = () => getRandomCodes(list);
-btn.ontouchstart = () => getRandomCodes(list);
-}
+        const tempos = {
+            '1': { label: 'Adagio', bpm: 65 },
+            '2': { label: 'Moderato', bpm: 100 },
+            '3': { label: 'Allegro', bpm: 150 }
+        };
 
-registerButton("major", modeLists.major);
-registerButton("majorMinor", modeLists.majorMinor);
-registerButton("majorMinor7", modeLists.majorMinor7);
-registerButton("majorMinor7Sharp", modeLists.majorMinor7Sharp);
-registerButton("allModes", modeLists.allModes);
-</script>
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            isSoundOn = !isSoundOn;
+            const btn = document.getElementById('soundBtn');
+            if (isSoundOn) {
+                btn.innerText = "SOUND: ON";
+                btn.classList.add('on');
+                initAudio(); // 念のため初期化
+            } else {
+                btn.innerText = "SOUND: OFF";
+                btn.classList.remove('on');
+            }
+        }
+
+        function playClick(time, frequency) {
+            if (!isSoundOn) return; // 音がOFFなら何もしない
+            
+            const osc = audioCtx.createOscillator();
+            const envelope = audioCtx.createGain();
+
+            osc.type = 'square';
+            osc.frequency.value = frequency;
+
+            envelope.gain.setValueAtTime(0.1, time);
+            envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+
+            osc.connect(envelope);
+            envelope.connect(audioCtx.destination);
+
+            osc.start(time);
+            osc.stop(time + 0.1);
+        }
+
+        function scheduler() {
+            while (nextNoteTime < audioCtx.currentTime + 0.1) {
+                const bpm = tempos[document.getElementById('tempoSlider').value].bpm;
+                const secondsPerBeat = 60.0 / bpm;
+
+                playClick(nextNoteTime, beatInBar === 0 ? 1000 : 600);
+
+                if (beatInBar === 0 && currentType) {
+                    generateChords();
+                }
+
+                nextNoteTime += secondsPerBeat;
+                beatInBar = (beatInBar + 1) % 4;
+            }
+            timerID = setTimeout(scheduler, 25);
+        }
+
+        function toggleAuto() {
+            initAudio();
+            isAuto = !isAuto;
+            const btn = document.getElementById('autoBtn');
+            if (isAuto) {
+                btn.classList.add('active');
+                nextNoteTime = audioCtx.currentTime;
+                beatInBar = 0;
+                scheduler();
+            } else {
+                btn.classList.remove('active');
+                clearTimeout(timerID);
+                beatInBar = 0;
+            }
+        }
+
+        function updateTempo() {
+            const val = document.getElementById('tempoSlider').value;
+            document.getElementById('tempoDisplay').innerText = tempos[val].label;
+        }
+
+        function setMode(type) {
+            currentType = type;
+            if (!isAuto) generateChords();
+        }
+
+        function generateChords() {
+            let activeRoots = [...rootsNatural];
+            let activeQualities = [...qualityMaj];
+
+            if (currentType === 'maj+min') activeQualities = activeQualities.concat(qualityMin);
+            else if (currentType === 'maj+min+7') activeQualities = activeQualities.concat(qualityMin, quality7);
+            else if (currentType === 'maj+min+7+#') { activeRoots = activeRoots.concat(rootsSharp); activeQualities = activeQualities.concat(qualityMin, quality7); }
+            else if (currentType === 'maj+min+7+#+♭') { activeRoots = activeRoots.concat(rootsSharp, rootsFlat); activeQualities = activeQualities.concat(qualityMin, quality7); }
+            else if (currentType === 'all') { activeRoots = activeRoots.concat(rootsSharp, rootsFlat); activeQualities = activeQualities.concat(qualityMin, quality7, qualitySpecial); }
+
+            let pool = [];
+            activeRoots.forEach(r => activeQualities.forEach(q => pool.push(r + q)));
+
+            let selectedChords = [];
+            let tempPool = [...pool];
+            for (let i = 0; i < 4; i++) {
+                if (tempPool.length === 0) break;
+                selectedChords.push(tempPool.splice(Math.floor(Math.random() * tempPool.length), 1)[0]);
+            }
+
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = '';
+            selectedChords.forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'chord-box';
+                div.innerText = name;
+                resultContainer.appendChild(div);
+            });
+        }
+    </script>
 </body>
 </html>
